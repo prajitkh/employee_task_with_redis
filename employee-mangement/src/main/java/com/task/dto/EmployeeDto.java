@@ -1,6 +1,8 @@
 package com.task.dto;
 
-public class EmployeeDto {
+import java.io.Serializable;
+
+public class EmployeeDto implements Serializable {
 
 	private String name;
 
@@ -43,8 +45,6 @@ public class EmployeeDto {
 	}
 
 	public EmployeeDto() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public EmployeeDto(String name, String department, Double salary, Integer age) {
@@ -53,6 +53,11 @@ public class EmployeeDto {
 		this.department = department;
 		this.salary = salary;
 		this.age = age;
+	}
+
+	@Override
+	public String toString() {
+		return "EmployeeDto [name=" + name + ", department=" + department + ", salary=" + salary + ", age=" + age + "]";
 	}
 
 }
