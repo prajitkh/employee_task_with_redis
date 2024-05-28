@@ -1,15 +1,21 @@
 package com.task.controller;
 
+import java.io.ByteArrayInputStream;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,12 +29,16 @@ import com.task.dto.EmployeePaginationResponse;
 import com.task.dto.IListEmployeeDto;
 import com.task.dto.ResponseDto;
 import com.task.entity.service.EmployeeService;
+import com.task.pdfGeneration.PdfGeneration;
 
 @RestController
 public class EmployeeController {
 
 	@Autowired
 	private EmployeeService employeeService;
+
+	@Autowired
+	private PdfGeneration generation;
 
 	@PostMapping("addUser")
 	public ResponseEntity<?> AddEmployee(@RequestHeader("HMAC") String receivedHmac,
@@ -98,5 +108,18 @@ public class EmployeeController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String jsonData = objectMapper.writeValueAsString(requestData);
 		return HMACUtil.generateHMAC(jsonData);
+	}
+
+	@RequestMapping(value = "/pdfreport", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+	public ResponseEntity<InputStreamResource> getALLEmployee() throws Exception {
+
+		ByteArrayInputStream pdfGeneration = generation.pdfGeneration();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Disposition", "inline; filename=EmployeeDetails.pdf");
+
+		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
+				.body(new InputStreamResource(pdfGeneration));
+
 	}
 }

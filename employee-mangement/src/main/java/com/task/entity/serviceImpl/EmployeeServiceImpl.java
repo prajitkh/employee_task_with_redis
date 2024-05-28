@@ -160,4 +160,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return employee.getName().toLowerCase().contains(search.toLowerCase())
 				|| employee.getDepartment().toLowerCase().contains(search.toLowerCase());
 	}
+
+	public List<Employee> getAllEmployee() {
+		List<Employee> findAll = this.employeeReposiotry.findAll();
+		return findAll;
+	}
 }
